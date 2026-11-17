@@ -28,6 +28,7 @@ Run on 2026-11-17 by the build agent in the built-in browser pane (Chromium-base
 | Leaderboard under the board lists 1st to 4th with the leader on top, and re-orders as scores change | Passed. Sampled six moments in one round and the order changed from You on top to Ada, Cora, then Cora on top, each time sorted by score |
 | Botnet swarm and Route hijack buttons appear in the Attacks panel | Passed (screenshot). A bot used Botnet swarm in the same round |
 | Sponsor grant and Routing glitch events | Covered by unit tests only. Not seen firing in the browser |
+| Leaderboard hides in Rush Hour and shows a note instead | Covered by a unit test of the visibility rule. Not checked in the browser |
 | Row sliding animation | Not judged by eye; only the final positions were checked |
 | Reduced-motion setting | Not run |
 

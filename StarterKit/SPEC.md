@@ -36,7 +36,7 @@ The Source forwards up to 12 pkt/s. The Destination accepts any number.
 
 ## Round
 
-- A round is 10:00. 0:00 to 0:30 Build (no packets). 0:30 to 2:00 grace (no attacks). 2:00 to 9:00 Live (attacks and chaos). 9:00 to 10:00 Rush Hour (spawn rate doubles; the live leaderboard stays visible).
+- A round is 10:00. 0:00 to 0:30 Build (no packets). 0:30 to 2:00 grace (no attacks). 2:00 to 9:00 Live (attacks and chaos). 9:00 to 10:00 Rush Hour (spawn rate doubles, leaderboard hidden).
 - Players start with 150 credits. Each delivered packet gives +1 credit and +1 point. Demolishing a device refunds 50% of its cost. The limit is 20 devices per network.
 - **Score** is packets delivered minus 3 per malware packet that reaches the Destination. The highest score at 10:00 wins. Ties go to the fewest dropped packets.
 - A quick **practice round** of 3:00 with the same phases scaled down exists so people can learn fast. Official scoring uses the full 10:00 round.

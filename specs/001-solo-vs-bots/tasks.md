@@ -37,7 +37,7 @@
 ## Phase 6: US4 Chaos and attacks (P2)
 
 - [x] T018 [US4] `test/events.test.js` then `src/sim/events.js`: five chaos events and four attacks with counters, discount, cooldown, blocked reward.
-- [x] T019 [US4] Attack bar and chaos banner in the UI; live leaderboard under the board (stays visible in Rush Hour); Port scan reveals a bot board.
+- [x] T019 [US4] Attack bar and chaos banner in the UI; live leaderboard under the board (hidden in Rush Hour); Port scan reveals a bot board.
 
 ## Phase 7: US5 Keyboard and accessibility (P2)
 

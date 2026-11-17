@@ -14,7 +14,7 @@ You build a chain of network devices on an 8 x 8 grid to carry packets from a So
 
 - **Seven random events** hit every player at once, five per round: a cut cable, a traffic spike, a DNS outage, a power surge, a bandwidth sale, a **sponsor grant** (everyone gets 50 credits, good) and a **routing glitch** (Switches, Routers and Load Balancers run at half speed for 15 s, bad).
 - **Six attacks.** Four have one counter. **Botnet swarm** (a flood followed by malware) needs a Firewall **and** a Load Balancer together, and **Route hijack** (takes a splitting device offline) needs a Router **and** a second path together. Half a defense only halves the damage and earns no reward.
-- **A live leaderboard** under your board always shows the leader on top, then 2nd, 3rd and 4th, and rows slide when the order changes. It stays visible in Rush Hour.
+- **A live leaderboard** under your board always shows the leader on top, then 2nd, 3rd and 4th, and rows slide when the order changes. It is hidden during Rush Hour, so the last 10% of the round is a blind finish.
 
 ## Who it is for and what you learn
 
@@ -59,7 +59,7 @@ Full rules, costs, chaos events, attacks and bots are in `specs/001-solo-vs-bots
 Requires Node 22 or newer (only for tests; the game itself needs no Node).
 
 ```sh
-node --test                                     # 55 unit tests, includes the three hand-checked fixtures
+node --test                                     # 56 unit tests, includes the three hand-checked fixtures
 node scripts/head-to-head.mjs 100 practice      # one-on-one bot duels (SC-005)
 node scripts/bots-vs-bots.mjs 100               # three-way bot rounds
 ```
@@ -68,7 +68,7 @@ node scripts/bots-vs-bots.mjs 100               # three-way bot rounds
 
 | Check | Result |
 | --- | --- |
-| `node --test`: 55 tests, 0 failed | **Passed** |
+| `node --test`: 56 tests, 0 failed | **Passed** |
 | Fixture 1 (correct case), 2 (wrong upgrade) and 3 (parallel paths, Firewall cap) | **Passed** (`test/fixtures.test.js`) |
 | Replay determinism: same seed and commands give identical scores | **Passed** (`test/replay.test.js`) |
 | Bot duels, 100 Practice rounds: Normal beats Easy 100%, Hard beats Normal 61%, Hard beats Easy 100% | **Passed** (SC-005) |

@@ -33,3 +33,12 @@ test('the same seed gives the same map and chaos schedule', () => {
   assert.deepEqual([...a.map.obstacles].sort(), [...b.map.obstacles].sort());
   assert.deepEqual(a.chaos.map((c) => c.kind), b.chaos.map((c) => c.kind));
 });
+
+test('the leaderboard is hidden during Rush Hour only', async () => {
+  const { leaderboardHidden } = await import('../src/ui/leaderboard.js');
+  const g = createGame({ bots: [], botsActive: false, chaos: false });
+  for (const [frac, hidden] of [[0.01, false], [0.1, false], [0.5, false], [0.89, false], [0.9, true], [0.99, true]]) {
+    g.tick = Math.floor(frac * g.totalTicks);
+    assert.equal(leaderboardHidden(g), hidden, `at ${frac * 100}% of the round`);
+  }
+});

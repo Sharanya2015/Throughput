@@ -27,5 +27,5 @@ Blocking issues remaining: none.
 | B6 | Medium | Normal and Hard bots rebuilt a plain cable where they had just demolished one to place a Firewall or Load Balancer. | Reserved tiles are skipped by the build plan. |
 | B7 | Low | SC-005 as written (three-way rounds) was not stable because the leader draws everyone's discounted attacks. | SC-005 now measures one-on-one duels; three-way results are reported only. |
 | B8 | Low | Spawn-rate steps "every 2 minutes" did not fit a 3-minute Practice round. | Steps happen at each 20% of the round. |
-| B9 | Low | The requirement that the scoreboard is hidden in Rush Hour conflicted with the request for a leaderboard that "always" shows the order. | The leaderboard stays visible all round, including Rush Hour. FR-009 and the setup instructions were updated. |
+| B9 | Low | The new leaderboard request said it should "always" show the order, which conflicted with hiding the scoreboard in Rush Hour. | The owner confirmed: keep it hidden in Rush Hour. The leaderboard hides for the last 10% of the round and the results screen shows the final order. |
 | B10 | Medium | A swarm's own flood swallowed its malware, so no defense looked the same as a Firewall. | The malware now follows the flood, so each half of the combination counter matters. |

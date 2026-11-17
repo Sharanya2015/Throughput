@@ -9,7 +9,7 @@ const PHASE_TEXT = {
   build: 'Build: no packets yet. Link SRC to DST with touching devices.',
   grace: 'Grace: packets are flowing. Attacks unlock soon.',
   live: 'Live: attacks and chaos events are active.',
-  rush: 'Rush Hour: packets double. Last push, watch the leaderboard!',
+  rush: 'Rush Hour: packets double and the leaderboard is hidden. Keep delivering.',
   over: 'Round over.',
 };
 

@@ -73,7 +73,7 @@ export function renderSetup(root, onStart) {
           h('li', {}, h('strong', {}, 'Build'), ' (first 5%): no packets yet. Lay your first path.'),
           h('li', {}, h('strong', {}, 'Grace'), ' (to 20%): packets flow, attacks are locked.'),
           h('li', {}, h('strong', {}, 'Live'), ' (to 90%): chaos events hit everyone, and you can attack bots while they attack you.'),
-          h('li', {}, h('strong', {}, 'Rush Hour'), ' (last 10%): packets double. The leaderboard under your board stays live, so you can see the final sprint.')),
+          h('li', {}, h('strong', {}, 'Rush Hour'), ' (last 10%): packets double and the leaderboard is hidden, so the final sprint is a blind finish.')),
         h('p', {}, 'Chaos events hit everyone at once. Bad: a cable is cut, traffic spikes, the Destination goes quiet, a device loses power, or a routing glitch halves your Switches, Routers and Load Balancers. Good: a sponsor grant gives 50 credits, or upgrades go on sale.'),
         h('p', {}, 'Attacks. Single counters: DDoS burst (Load Balancer or two paths), Malware (Firewall), Latency spike (a Router), Port scan (Firewall next to the Source). Combination counters: Botnet swarm needs a Firewall and a Load Balancer together, and Route hijack needs a Router and a second path together. One half of a combination only reduces the damage.'),
 
