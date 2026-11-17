@@ -3,6 +3,7 @@ import { renderSetup } from './setup.js';
 import { createBoard } from './board.js';
 import { createHud } from './hud.js';
 import { renderResults } from './results.js';
+import { createLeaderboard } from './leaderboard.js';
 import { createGame, stepGame, issue } from '../sim/game.js';
 import { DEVICE_KINDS, DT } from '../sim/balance.js';
 import { key } from '../sim/network.js';
@@ -39,7 +40,8 @@ function startGame(opts) {
   const left = h('section', { class: 'left' });
   const boardHolder = h('div', { class: 'boardwrap' });
   const hud = createHud(left, game, human, ctl);
-  left.append(boardHolder, h('p', { class: 'legend' },
+  const leaderboard = createLeaderboard(game, human);
+  left.append(boardHolder, leaderboard.el, h('p', { class: 'legend' },
     'Shapes: Cable = pill, Switch = square, Router = circle, Firewall = hexagon, Load Balancer = octagon. C+ and C++ are upgraded cables. q = queue, % = capacity used.'));
   root.append(h('div', { class: 'layout' }, left, hud.side));
 
@@ -74,6 +76,7 @@ function startGame(opts) {
     while (state.logs < game.log.length) say(game.log[state.logs++].text, 'event');
     board.update(state.sel, state.tool);
     hud.update(state);
+    leaderboard.update();
     if (game.over) { renderResults(root, game, () => startGame({ ...opts, seed: opts.seed + 1 }), showSetup); loop = null; return; }
     loop = requestAnimationFrame(frame);
   };

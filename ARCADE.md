@@ -5,7 +5,7 @@ game:
   title: Throughput
   slug: throughput
   tagline: "Find the bottleneck, share the load, and outscore three bots."
-  summary: "Throughput is a short browser game where you build a chain of network devices that carries packets from a Source to a Destination while bots compete and attack. After each decision it shows queue fill, utilization and drops, and it names the bottleneck. It teaches that a path is only as fast as its slowest device and that parallel paths share load."
+  summary: "Throughput is a short browser game where you build a chain of network devices that carries packets from a Source to a Destination while bots compete and attack. Seven random events, six attacks (two need a combination of equipment to stop) and a live leaderboard keep each round moving. After each decision it shows queue fill, utilization and drops, and it names the bottleneck. It teaches that a path is only as fast as its slowest device and that parallel paths share load."
   topics: [bandwidth, bottleneck, load-balancing, queues, firewalls]
   category: network-fundamentals
   skill_level: beginner
@@ -83,8 +83,8 @@ runtime:
   save_state: "none. Reloading returns to the setup screen."
 
 verification:
-  tests: "node --test (50 unit tests), node scripts/head-to-head.mjs and node scripts/bots-vs-bots.mjs (bot balance), a manual browser playthrough recorded in docs/PLAYTEST.md, and a check that the hosted GitHub Pages site loads and runs a round"
-  tests_passing: "50 of 50 on 2026-11-17"
+  tests: "node --test (55 unit tests), node scripts/head-to-head.mjs and node scripts/bots-vs-bots.mjs (bot balance), a manual browser playthrough recorded in docs/PLAYTEST.md, and a check that the hosted GitHub Pages site loads and runs a round"
+  tests_passing: "55 of 55 on 2026-11-17"
   facts_sourced_from: "The game's own traffic model, defined in specs/001-solo-vs-bots/spec.md. It was not checked against an external networking source or by an independent reviewer."
   known_limits:
     - "Solo vs Bots only. Versus and Co-op are designed in docs/ but not built."

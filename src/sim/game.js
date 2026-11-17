@@ -34,7 +34,7 @@ export function createGame(opts = {}) {
   const game = {
     seed, mode, rng, map, totalTicks, tick: 0, over: false, botsActive, spawnOverride,
     buildTicks: Math.floor(PHASES.build * totalTicks),
-    competitors, chaos: [], effects: { spikeUntil: 0, dnsUntil: 0, saleUntil: 0 },
+    competitors, chaos: [], effects: { spikeUntil: 0, dnsUntil: 0, saleUntil: 0, glitchUntil: 0 },
     attacks: [], log: [], commandLog: [], banner: null, hints: [],
   };
   if (chaos) scheduleChaos(game);

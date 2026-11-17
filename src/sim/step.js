@@ -1,5 +1,5 @@
 import {
-  DT, MAX_HOPS, MALWARE_PENALTY, SPAWN, PHASES,
+  DT, MAX_HOPS, MALWARE_PENALTY, SPAWN, PHASES, GLITCH_KINDS,
 } from './balance.js';
 import {
   key, neighborsOf, winAdd, capacityOf, queueMax, specOf, rebuild,
@@ -33,6 +33,7 @@ export function enqueue(game, comp, dev, pkt) {
 function effectiveCap(game, comp, dev) {
   let cap = capacityOf(dev);
   if (comp.board.latencyUntil > game.tick && dev.kind !== 'router') cap *= 0.5;
+  if (game.effects.glitchUntil > game.tick && GLITCH_KINDS.includes(dev.kind)) cap *= 0.5;
   return cap;
 }
 
@@ -85,6 +86,7 @@ export function stepBoard(game, comp) {
     while (board.malwareAcc >= 1 && board.malwareJobs.length) {
       board.malwareAcc -= 1;
       const job = board.malwareJobs[0];
+      if (job.after && t < job.after) { board.malwareAcc = 0; break; } // a swarm's malware follows its flood
       job.rec.injected++;
       enqueue(game, comp, board.source, { kind: 'malware', hops: 0, rec: job.rec });
       if (--job.left <= 0) board.malwareJobs.shift();

@@ -21,6 +21,16 @@ Run on 2026-11-17 by the build agent in the built-in browser pane (Chromium-base
 | 15 | Screen reader pass (labels read aloud) | Not run. Tiles have descriptive `aria-label`s and the feed is `role="log"` |
 | 16 | Phone or tablet layout | Not run (out of scope for v1) |
 
+## Added later (2026-11-17)
+
+| Check | Result |
+| --- | --- |
+| Leaderboard under the board lists 1st to 4th with the leader on top, and re-orders as scores change | Passed. Sampled six moments in one round and the order changed from You on top to Ada, Cora, then Cora on top, each time sorted by score |
+| Botnet swarm and Route hijack buttons appear in the Attacks panel | Passed (screenshot). A bot used Botnet swarm in the same round |
+| Sponsor grant and Routing glitch events | Covered by unit tests only. Not seen firing in the browser |
+| Row sliding animation | Not judged by eye; only the final positions were checked |
+| Reduced-motion setting | Not run |
+
 ## Rough edges seen
 
 - The game opens with focus nowhere; the first Tab goes to the skip link. Click a tile once to focus the board.

@@ -181,3 +181,117 @@ test('Bandwidth sale halves upgrade prices for 30 s', () => {
   applyCommand(g, { type: 'upgrade', actor: 0, x: 2, y: 2 });
   assert.equal(later - g.competitors[0].credits, 25);
 });
+
+// ---- Sponsor grant, Routing glitch, Botnet swarm and Route hijack ----
+
+test('Sponsor grant gives every network 50 credits', () => {
+  const g = duel({ credits: 100 });
+  g.chaos = [{ tick: 100, kind: 'grant', done: false }];
+  run(g, 6);
+  for (const c of g.competitors) assert.equal(c.credits, 150);
+  assert.match(g.banner.text, /Sponsor grant/);
+});
+
+test('Routing glitch halves Routers, Switches and Load Balancers for 15 s but not Cables', () => {
+  const g = duel({ spawnOverride: 8 });
+  build(g, 0, PATH_A);
+  for (const [x, y] of PATH_A) for (let i = 0; i < 2; i++) applyCommand(g, { type: 'upgrade', actor: 0, x, y });
+  applyCommand(g, { type: 'demolish', actor: 0, x: 4, y: 2 });
+  build(g, 0, [[4, 2]], 'router');
+  g.chaos = [{ tick: 600, kind: 'glitch', done: false }];
+  const rate = (s) => { const before = g.competitors[0].delivered; run(g, s); return (g.competitors[0].delivered - before) / s; };
+  run(g, 20); // settle, tick 400
+  assert.ok(Math.abs(rate(8) - 8) < 0.5, 'before the glitch the Router passes 8 pkt/s');
+  run(g, 5); // tick 760, glitch active (starts at 600, ends at 900)
+  const during = rate(5);
+  assert.ok(during < 6.5, `during the glitch delivery is capped near 6 pkt/s, got ${during}`);
+  run(g, 10);
+  assert.ok(Math.abs(rate(8) - 8) < 0.7, 'after the glitch delivery recovers');
+});
+
+function swarmTarget(devices) {
+  const g = duel({ spawnOverride: 2 });
+  build(g, 1, PATH_A);
+  if (devices.firewall) { applyCommand(g, { type: 'demolish', actor: 1, x: 4, y: 2 }); build(g, 1, [[4, 2]], 'firewall'); }
+  if (devices.balancer) { applyCommand(g, { type: 'demolish', actor: 1, x: 7, y: 3 }); build(g, 1, [[7, 3]], 'balancer'); }
+  run(g, 12);
+  g.tick = Math.max(g.tick, 0.3 * g.totalTicks);
+  return g;
+}
+
+test('Botnet swarm needs a Firewall AND a Load Balancer together to be blocked', () => {
+  const none = swarmTarget({});
+  assert.equal(attack(none, 'swarm').ok, true);
+  run(none, 20);
+  assert.ok(none.competitors[1].malwareHits > 0, 'no defenses: malware reaches the Destination');
+  assert.ok(none.competitors[1].dropped > 0, 'no defenses: the flood drops packets');
+
+  const onlyFirewall = swarmTarget({ firewall: true });
+  attack(onlyFirewall, 'swarm');
+  assert.ok(onlyFirewall.competitors[1].board.ddos, 'a Firewall alone does not stop the flood');
+  run(onlyFirewall, 20);
+  assert.equal(onlyFirewall.competitors[1].malwareHits, 0, 'the Firewall does stop the malware part');
+  assert.equal(onlyFirewall.competitors[1].attacksBlocked, 0, 'half a defense earns no reward');
+
+  const onlyBalancer = swarmTarget({ balancer: true });
+  attack(onlyBalancer, 'swarm');
+  run(onlyBalancer, 20);
+  assert.ok(onlyBalancer.competitors[1].malwareHits > 0, 'a Load Balancer alone does not stop the malware');
+  assert.equal(onlyBalancer.competitors[1].attacksBlocked, 0);
+
+  const both = swarmTarget({ firewall: true, balancer: true });
+  const credits = both.competitors[1].credits;
+  attack(both, 'swarm');
+  assert.equal(both.competitors[1].board.ddos, null, 'both defenses: no flood');
+  run(both, 10);
+  assert.equal(both.competitors[1].malwareHits, 0);
+  assert.equal(both.competitors[1].attacksBlocked, 1);
+  assert.ok(both.competitors[1].credits >= credits + 10, 'blocked attack pays the defender');
+});
+
+function hijackTarget({ router, spare }) {
+  const g = duel({ spawnOverride: 2 });
+  build(g, 1, spare ? [...PATH_A, ...PATH_B] : PATH_A);
+  if (router) { applyCommand(g, { type: 'demolish', actor: 1, x: 4, y: 2 }); build(g, 1, [[4, 2]], 'router'); }
+  run(g, 12);
+  g.tick = Math.max(g.tick, 0.3 * g.totalTicks);
+  return g;
+}
+const offline = (g) => [...g.competitors[1].board.devices.values()].filter((d) => d.offlineUntil > g.tick);
+
+test('Route hijack needs a Router AND a second path together to be blocked', () => {
+  const bare = hijackTarget({});
+  attack(bare, 'hijack');
+  const [victim] = offline(bare);
+  assert.ok(victim, 'with no defenses a device goes offline');
+  assert.equal(victim.offlineUntil - bare.tick, 12 * 20, 'full 12 s outage');
+
+  const routerOnly = hijackTarget({ router: true });
+  attack(routerOnly, 'hijack');
+  assert.equal(offline(routerOnly)[0].offlineUntil - routerOnly.tick, 6 * 20, 'one defense halves the outage');
+
+  const spareOnly = hijackTarget({ spare: true });
+  attack(spareOnly, 'hijack');
+  assert.equal(offline(spareOnly)[0].offlineUntil - spareOnly.tick, 6 * 20);
+
+  const both = hijackTarget({ router: true, spare: true });
+  const before = both.competitors[1].credits;
+  attack(both, 'hijack');
+  assert.equal(offline(both).length, 0, 'both defenses: nothing goes offline');
+  run(both, 14);
+  assert.equal(both.competitors[1].attacksBlocked, 1);
+  assert.ok(both.competitors[1].credits >= before + 10);
+});
+
+test('the two new attacks cost 55 and 45 credits and respect the cooldown', () => {
+  const g = duel();
+  g.tick = 0.3 * g.totalTicks;
+  const c0 = g.competitors[0].credits;
+  assert.equal(attack(g, 'swarm').ok, true);
+  assert.equal(g.competitors[0].credits, c0 - 55);
+  assert.match(attack(g, 'hijack').reason, /cooldown/);
+  g.tick += 300;
+  const c1 = g.competitors[0].credits;
+  assert.equal(attack(g, 'hijack').ok, true);
+  assert.equal(g.competitors[0].credits, c1 - 45);
+});

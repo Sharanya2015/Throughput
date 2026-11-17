@@ -36,7 +36,7 @@ The Source forwards up to 12 pkt/s. The Destination accepts any number.
 
 ## Round
 
-- A round is 10:00. 0:00 to 0:30 Build (no packets). 0:30 to 2:00 grace (no attacks). 2:00 to 9:00 Live (attacks and chaos). 9:00 to 10:00 Rush Hour (spawn rate doubles, scoreboard hidden).
+- A round is 10:00. 0:00 to 0:30 Build (no packets). 0:30 to 2:00 grace (no attacks). 2:00 to 9:00 Live (attacks and chaos). 9:00 to 10:00 Rush Hour (spawn rate doubles; the live leaderboard stays visible).
 - Players start with 150 credits. Each delivered packet gives +1 credit and +1 point. Demolishing a device refunds 50% of its cost. The limit is 20 devices per network.
 - **Score** is packets delivered minus 3 per malware packet that reaches the Destination. The highest score at 10:00 wins. Ties go to the fewest dropped packets.
 - A quick **practice round** of 3:00 with the same phases scaled down exists so people can learn fast. Official scoring uses the full 10:00 round.
@@ -44,7 +44,7 @@ The Source forwards up to 12 pkt/s. The Destination accepts any number.
 ## Chaos events and attacks
 
 - Chaos events happen at 2:00, 3:30, 5:00, 6:30 and 8:00 (scaled in practice mode): Fiber cut (busiest cable destroyed), Traffic spike (spawn doubles for 20 s), DNS outage (Destination stops accepting for 5 s), Power surge (one random device offline 15 s), Bandwidth sale (upgrades half price for 30 s). They hit all competitors at once.
-- Attacks (from 2:00, one per attacker every 15 s): DDoS burst 40 credits (20 junk packets per second on the target's busiest link for 8 s, countered by a Load Balancer or a second path); Malware packet 30 credits (10 malware packets, each reaching the Destination costs 3 points, countered by a Firewall); Latency spike 25 credits (the target's devices run at half capacity for 10 s); Port scan 20 credits (reveals the target's layout and queues for 20 s).
+- Attacks (from 2:00, one per attacker every 15 s): DDoS burst 40 credits (20 junk packets per second on the target's busiest link for 8 s, countered by a Load Balancer or a second path); Malware packet 30 credits (10 malware packets, each reaching the Destination costs 3 points, countered by a Firewall); Latency spike 25 credits (the target's devices run at half capacity for 10 s); Port scan 20 credits (reveals the target's layout and queues for 20 s); Botnet swarm 55 credits (flood plus malware, fully blocked only by a Firewall and a Load Balancer together); Route hijack 45 credits (takes the busiest splitting device offline for 12 s, fully blocked only by a Router and a second path together).
 - Attacks on the points leader cost 20% less. A fully blocked attack gives the defender 10 credits.
 
 ## Bots

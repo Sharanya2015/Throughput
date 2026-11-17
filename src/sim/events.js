@@ -1,6 +1,6 @@
 import {
   CHAOS_AT, CHAOS_KINDS, CHAOS_SECONDS, CHAOS_LABELS, ATTACKS, ATTACK_COOLDOWN_SECONDS,
-  LEADER_DISCOUNT, BLOCK_REWARD, DDOS_FACTOR, TICKS_PER_SECOND as TPS, PHASES,
+  LEADER_DISCOUNT, BLOCK_REWARD, DDOS_FACTOR, TICKS_PER_SECOND as TPS, PHASES, GRANT_CREDITS,
 } from './balance.js';
 import { key, winSum, neighborsOf } from './network.js';
 
@@ -31,8 +31,10 @@ function applyChaos(game, kind) {
   if (kind === 'spike') game.effects.spikeUntil = t + CHAOS_SECONDS.spike * TPS;
   if (kind === 'dns') game.effects.dnsUntil = t + CHAOS_SECONDS.dns * TPS;
   if (kind === 'sale') game.effects.saleUntil = t + CHAOS_SECONDS.sale * TPS;
+  if (kind === 'glitch') game.effects.glitchUntil = t + CHAOS_SECONDS.glitch * TPS;
   for (const comp of game.competitors) {
     const board = comp.board;
+    if (kind === 'grant') comp.credits += GRANT_CREDITS;
     if (kind === 'fiber') {
       const c = busiest(game, board, true);
       if (c) {
@@ -78,6 +80,15 @@ function parallelPaths(board) {
     board.dist.get(key(x, y)) === sd - 1).length >= 2;
 }
 
+function pickBusiest(game, list) {
+  let best = null, bestSent = -1;
+  for (const d of list) {
+    const sent = winSum(d.sent, game.tick);
+    if (sent > bestSent) { best = d; bestSent = sent; }
+  }
+  return best;
+}
+
 export function launchAttack(game, attacker, target, kind) {
   const spec = ATTACKS[kind];
   if (!spec) return fail('Unknown attack.');
@@ -106,6 +117,35 @@ export function launchAttack(game, attacker, target, kind) {
     rec.counter = hasKind(board, 'router');
     if (!rec.counter) board.latencyUntil = t + spec.seconds * TPS;
     rec.resolveAt = t + spec.seconds * TPS;
+  } else if (kind === 'swarm') {
+    // Needs a Firewall AND a Load Balancer together: the flood and the malware are separate problems.
+    const fw = hasKind(board, 'firewall'), lb = hasKind(board, 'balancer');
+    Object.assign(rec, { injected: 0, blocked: 0, reached: 0, dropped: 0, total: spec.count, counter: fw && lb });
+    rec.resolveAt = t + spec.seconds * TPS;
+    if (!rec.counter) {
+      const b = busiest(game, board, false) || board.source;
+      const factor = lb ? DDOS_FACTOR.balancer : (parallelPaths(board) ? DDOS_FACTOR.parallel : 1);
+      board.ddos = { until: t + spec.seconds * TPS, key: key(b.x, b.y), acc: 0, factor };
+      if (!fw) {
+        board.malwareJobs = board.malwareJobs || [];
+        board.malwareJobs.push({ rec, left: spec.count, after: t + spec.seconds * TPS });
+      }
+    }
+  } else if (kind === 'hijack') {
+    // Needs a Router AND a second path together: the Router re-routes, the spare path carries the load.
+    const router = hasKind(board, 'router'), spare = parallelPaths(board);
+    rec.counter = router && spare;
+    rec.resolveAt = t + spec.seconds * TPS;
+    if (!rec.counter) {
+      const all = [...board.devices.values()].filter((d) => d.kind !== 'source' && d.kind !== 'dest');
+      const splitters = all.filter((d) => ['router', 'switch', 'balancer'].includes(d.kind));
+      const victim = pickBusiest(game, splitters.length ? splitters : all);
+      if (victim) {
+        const seconds = (router || spare) ? spec.seconds / 2 : spec.seconds;
+        victim.offlineUntil = t + seconds * TPS;
+        board.dirty = true;
+      }
+    }
   } else if (kind === 'scan') {
     const sn = neighborsOf(board.source.x, board.source.y).some(([x, y]) => board.devices.get(key(x, y))?.kind === 'firewall');
     rec.counter = sn;

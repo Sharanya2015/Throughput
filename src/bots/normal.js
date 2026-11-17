@@ -26,7 +26,7 @@ export default function normal(game, comp) {
   }
   if (canAttack(game, comp, secs(25))) {
     const target = leaderOf(game, comp);
-    const kind = comp.rng.pick(['ddos', 'malware', 'latency']);
+    const kind = comp.rng.pick(['ddos', 'malware', 'latency', 'swarm', 'hijack']);
     cmds.push({ type: 'attack', actor: comp.id, target: target.id, kind });
     st.lastAttack = game.tick;
   }

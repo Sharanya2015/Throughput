@@ -16,7 +16,7 @@ export default function easy(game, comp) {
   }
   if (canAttack(game, comp, secs(45))) {
     const target = comp.rng.pick(opponents(game, comp));
-    const kind = comp.rng.pick(['ddos', 'malware', 'latency']);
+    const kind = comp.rng.pick(['ddos', 'malware', 'latency', 'hijack']);
     cmds.push({ type: 'attack', actor: comp.id, target: target.id, kind });
     st.lastAttack = game.tick;
   }

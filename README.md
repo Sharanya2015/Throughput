@@ -10,6 +10,12 @@ You build a chain of network devices on an 8 x 8 grid to carry packets from a So
 
 **Status:** first playable version, **Solo vs Bots** only. Versus and Co-op against a Super Bot are designed but not built (see `docs/FULL-SPEC.md` and `docs/FULL-ROADMAP-TASKS.md`).
 
+## What happens in a round
+
+- **Seven random events** hit every player at once, five per round: a cut cable, a traffic spike, a DNS outage, a power surge, a bandwidth sale, a **sponsor grant** (everyone gets 50 credits, good) and a **routing glitch** (Switches, Routers and Load Balancers run at half speed for 15 s, bad).
+- **Six attacks.** Four have one counter. **Botnet swarm** (a flood followed by malware) needs a Firewall **and** a Load Balancer together, and **Route hijack** (takes a splitting device offline) needs a Router **and** a second path together. Half a defense only halves the damage and earns no reward.
+- **A live leaderboard** under your board always shows the leader on top, then 2nd, 3rd and 4th, and rows slide when the order changes. It stays visible in Rush Hour.
+
 ## Who it is for and what you learn
 
 The player is a network engineer who repeatedly builds and repairs a chain of links and devices to carry packets, and gets better at finding bandwidth bottlenecks and balancing load across parallel paths because the game shows per-device utilization, queue fill and drops after every decision.
@@ -53,7 +59,7 @@ Full rules, costs, chaos events, attacks and bots are in `specs/001-solo-vs-bots
 Requires Node 22 or newer (only for tests; the game itself needs no Node).
 
 ```sh
-node --test                                     # 50 unit tests, includes the three hand-checked fixtures
+node --test                                     # 55 unit tests, includes the three hand-checked fixtures
 node scripts/head-to-head.mjs 100 practice      # one-on-one bot duels (SC-005)
 node scripts/bots-vs-bots.mjs 100               # three-way bot rounds
 ```
@@ -62,12 +68,12 @@ node scripts/bots-vs-bots.mjs 100               # three-way bot rounds
 
 | Check | Result |
 | --- | --- |
-| `node --test`: 50 tests, 0 failed | **Passed** |
+| `node --test`: 55 tests, 0 failed | **Passed** |
 | Fixture 1 (correct case), 2 (wrong upgrade) and 3 (parallel paths, Firewall cap) | **Passed** (`test/fixtures.test.js`) |
 | Replay determinism: same seed and commands give identical scores | **Passed** (`test/replay.test.js`) |
-| Bot duels, 100 Practice rounds: Normal beats Easy 99%, Hard beats Normal 55%, Hard beats Easy 100% | **Passed** (SC-005) |
-| Bot duels, 40 Full rounds: 100%, 83%, 100% | **Passed** |
-| Three-way bot rounds, 100 Practice rounds: Normal wins 63%, Hard 37%, Easy 0% | Reported only. In three-way rounds the score leader draws everyone's discounted attacks, so Hard often loses ground there |
+| Bot duels, 100 Practice rounds: Normal beats Easy 100%, Hard beats Normal 61%, Hard beats Easy 100% | **Passed** (SC-005) |
+| Bot duels, 40 Full rounds: 98%, 90%, 100% | **Passed** |
+| Three-way bot rounds, 100 Practice rounds: Normal wins 53%, Hard 47%, Easy 0% | Reported only. In three-way rounds the score leader draws everyone's discounted attacks, so Hard often loses ground there |
 | Browser playthrough by the build agent (keyboard build, wrong upgrade message, results screen) | **Passed**, see `docs/PLAYTEST.md` |
 | A second person playing without coaching | **Not done** |
 | Playing with the network disconnected | **Not run** (no network calls found in the code) |

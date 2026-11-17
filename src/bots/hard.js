@@ -42,7 +42,10 @@ export default function hard(game, comp) {
     let kind = null;
     if (scanned) {
       const kinds = new Set([...target.board.devices.values()].map((d) => d.kind));
-      kind = !kinds.has('firewall') ? 'malware' : !kinds.has('balancer') ? 'ddos' : !kinds.has('router') ? 'latency' : 'ddos';
+      const spare = [...target.board.devices.values()].filter((d) => d.kind === 'cable').length > 12;
+      // Pick the attack the target has no counter for; combo attacks when it lacks both halves.
+      kind = !kinds.has('firewall') && !kinds.has('balancer') ? 'swarm' : !kinds.has('firewall') ? 'malware'
+        : !kinds.has('balancer') ? 'ddos' : !kinds.has('router') ? 'latency' : !spare ? 'hijack' : 'ddos';
     } else if (comp.credits >= ATTACKS.scan.cost + ATTACKS.malware.cost && (st.sinceScan = (st.sinceScan ?? 0) + 1) >= 3) {
       kind = 'scan'; st.sinceScan = 0; // scan every third attack, then use the knowledge while it lasts
     } else {

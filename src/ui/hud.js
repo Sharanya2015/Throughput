@@ -9,7 +9,7 @@ const PHASE_TEXT = {
   build: 'Build: no packets yet. Link SRC to DST with touching devices.',
   grace: 'Grace: packets are flowing. Attacks unlock soon.',
   live: 'Live: attacks and chaos events are active.',
-  rush: 'Rush Hour: packets double and the scoreboard is hidden.',
+  rush: 'Rush Hour: packets double. Last push, watch the leaderboard!',
   over: 'Round over.',
 };
 
@@ -49,6 +49,7 @@ export function createHud(root, game, human, ctl) {
 
   const feed = h('ul', { class: 'feed', role: 'log', 'aria-label': 'Messages' });
   const board = h('div', { class: 'scoreboard' });
+  const scanCard = h('section', { class: 'card', hidden: true }, h('h3', {}, 'Port scan results'), board);
   let boardSig = '', feedSig = '';
 
   root.append(
@@ -61,7 +62,7 @@ export function createHud(root, game, human, ctl) {
     h('section', { class: 'card' }, selTitle, selBody, h('div', { class: 'row' }, upgradeBtn, demolishBtn)),
     h('section', { class: 'card' }, h('h3', {}, 'Attacks'), h('label', {}, 'Target ', target), attackBox, attackStatus),
     h('section', { class: 'card' }, h('h3', {}, 'What is happening'), feed),
-    h('section', { class: 'card' }, h('h3', {}, 'Scoreboard'), board));
+    scanCard);
 
   function miniBoard(c) {
     const rows = [];
@@ -120,22 +121,14 @@ export function createHud(root, game, human, ctl) {
       for (const m of state.feed.slice(-8).reverse()) feed.append(h('li', { class: m.kind }, m.text));
     }
 
-    const hidden = ph === 'rush';
-    const sig = [hidden, ...game.competitors.map((c) => `${c.score}/${c.delivered}/${c.dropped}/${c.board.count}/${human.scanUntil[c.id] > t}`)].join('|') + ph;
+    const scans = game.competitors.filter((c) => c !== human && (human.scanUntil[c.id] ?? 0) > t);
+    const sig = scans.map((c) => `${c.id}:${c.board.count}:${c.score}`).join('|');
     if (sig !== boardSig) {
       boardSig = sig;
       clear(board);
-      if (hidden) board.append(h('p', {}, 'Scoreboard hidden during Rush Hour. Keep delivering.'));
-      else {
-        board.append(h('table', {},
-          h('thead', {}, h('tr', {}, ...['Player', 'Score', 'Delivered', 'Dropped', 'Devices'].map((x) => h('th', { scope: 'col' }, x)))),
-          h('tbody', {}, ...game.competitors.map((c) => h('tr', { class: c === human ? 'me' : '' },
-            h('th', { scope: 'row' }, c.name), h('td', {}, c.score), h('td', {}, c.delivered), h('td', {}, c.dropped), h('td', {}, c.board.count))))));
-        for (const c of game.competitors) {
-          if (c !== human && (human.scanUntil[c.id] ?? 0) > t) {
-            board.append(h('details', { open: true }, h('summary', {}, `Port scan of ${c.name}`), h('pre', { 'aria-label': `Layout of ${c.name}` }, miniBoard(c))));
-          }
-        }
+      scanCard.hidden = scans.length === 0;
+      for (const c of scans) {
+        board.append(h('details', { open: true }, h('summary', {}, `Port scan of ${c.name}`), h('pre', { 'aria-label': `Layout of ${c.name}` }, miniBoard(c))));
       }
     }
   }

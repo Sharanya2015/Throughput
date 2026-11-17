@@ -101,3 +101,21 @@ button.primary { background: linear-gradient(90deg, var(--cable), var(--accent))
 .banner { background: color-mix(in srgb, var(--warn) 18%, transparent); border-radius: 6px; padding: 0 8px; }
 .banner:empty { background: none; padding: 0; }
 tr.me { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+
+/* ---- Leaderboard ---- */
+.leaderboard-card { margin-top: 12px; max-width: 700px; }
+.leaderboard { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.lrow { display: grid; grid-template-columns: 3.2rem minmax(7rem, 1.2fr) minmax(4rem, 2fr) 3.2rem; grid-template-areas: 'place name bar score' 'place stats stats stats';
+  align-items: center; column-gap: 10px; padding: 6px 10px; border-radius: 8px; background: var(--panel2); border-left: 6px solid var(--line);
+  transition: transform .35s ease, background .3s; }
+.lrow .place { grid-area: place; font-weight: 800; text-align: center; border-radius: 6px; padding: 2px 0; background: var(--panel); }
+.lrow .lname { grid-area: name; font-weight: 700; } .lrow .bar { grid-area: bar; height: 10px; border-radius: 6px; background: var(--panel); overflow: hidden; }
+.lrow .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--cable), var(--accent)); transition: width .4s ease; }
+.lrow .lscore { grid-area: score; font-size: 1.3rem; font-weight: 800; text-align: right; } .lrow .lstats { grid-area: stats; color: var(--muted); font-size: .8rem; }
+.lrow[data-rank="1"] { border-left-color: #fbbf24; } .lrow[data-rank="1"] .place { background: #fbbf24; color: #1b1300; }
+.lrow[data-rank="2"] { border-left-color: #cbd5e1; } .lrow[data-rank="2"] .place { background: #cbd5e1; color: #101826; }
+.lrow[data-rank="3"] { border-left-color: #d08a4e; } .lrow[data-rank="3"] .place { background: #d08a4e; color: #1d1005; }
+.lrow[data-rank="4"] { border-left-color: #64748b; }
+.lrow.me { box-shadow: inset 0 0 0 2px var(--accent); }
+.lrow.rise { background: color-mix(in srgb, var(--good) 25%, var(--panel2)); } .lrow.fall { background: color-mix(in srgb, var(--bad) 22%, var(--panel2)); }
+@media (prefers-reduced-motion: reduce) { .lrow, .lrow .bar i { transition: none; } }
