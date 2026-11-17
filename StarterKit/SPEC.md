@@ -44,6 +44,7 @@ The Source forwards up to 12 pkt/s. The Destination accepts any number.
 ## Chaos events and attacks
 
 - Chaos events happen at 2:00, 3:30, 5:00, 6:30 and 8:00 (scaled in practice mode): Fiber cut (busiest cable destroyed), Traffic spike (spawn doubles for 20 s), DNS outage (Destination stops accepting for 5 s), Power surge (one random device offline 15 s), Bandwidth sale (upgrades half price for 30 s). They hit all competitors at once.
+- Warnings: every random event and every attack aimed at you is announced with a 5 ... 1 countdown. Attacks land 5 s after launch, so a counter built in time still counts.
 - Attacks (from 2:00, one per attacker every 15 s): DDoS burst 40 credits (20 junk packets per second on the target's busiest link for 8 s, countered by a Load Balancer or a second path); Malware packet 30 credits (10 malware packets, each reaching the Destination costs 3 points, countered by a Firewall); Latency spike 25 credits (the target's devices run at half capacity for 10 s); Port scan 20 credits (reveals the target's layout and queues for 20 s); Botnet swarm 55 credits (flood plus malware, fully blocked only by a Firewall and a Load Balancer together); Route hijack 45 credits (takes the busiest splitting device offline for 12 s, fully blocked only by a Router and a second path together).
 - Attacks on the points leader cost 20% less. A fully blocked attack gives the defender 10 credits.
 

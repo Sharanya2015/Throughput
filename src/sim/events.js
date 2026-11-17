@@ -1,6 +1,7 @@
 import {
   CHAOS_AT, CHAOS_KINDS, CHAOS_SECONDS, CHAOS_LABELS, ATTACKS, ATTACK_COOLDOWN_SECONDS,
   LEADER_DISCOUNT, BLOCK_REWARD, DDOS_FACTOR, TICKS_PER_SECOND as TPS, PHASES, GRANT_CREDITS,
+  WARNING_SECONDS, CHAOS_NAMES, CHAOS_GOOD,
 } from './balance.js';
 import { key, winSum, neighborsOf } from './network.js';
 
@@ -99,6 +100,18 @@ export function launchAttack(game, attacker, target, kind) {
   if (attacker.credits < cost) return fail(`Not enough credits: ${spec.label} costs ${cost}.`);
   attacker.credits -= cost;
   attacker.lastAttackTick = game.tick;
+  if (game.attackDelay > 0) {
+    // Announced first: the defender gets a few seconds to react before it lands.
+    game.pending.push({ at: game.tick + game.attackDelay, attacker: attacker.id, target: target.id, kind, cost });
+    log(game, `Incoming: ${attacker.name} launched ${spec.label} at ${target.name}. It lands in ${Math.round(game.attackDelay / TPS)} s.`);
+    return { ok: true, message: `${spec.label} launched at ${target.name} for ${cost} credits. It lands in ${Math.round(game.attackDelay / TPS)} s.`, cost };
+  }
+  return applyAttack(game, attacker, target, kind, cost);
+}
+
+// The attack's effect, applied when it lands.
+function applyAttack(game, attacker, target, kind, cost) {
+  const spec = ATTACKS[kind];
   const t = game.tick;
   const board = target.board;
   const rec = { kind, attacker: attacker.id, defender: target.id, counter: false, resolveAt: null, done: false };
@@ -153,8 +166,34 @@ export function launchAttack(game, attacker, target, kind) {
     rec.resolveAt = t + spec.seconds * TPS;
   }
   game.attacks.push(rec);
-  log(game, `${attacker.name} launched ${spec.label} at ${target.name}.`);
+  log(game, game.attackDelay > 0 ? `${attacker.name}'s ${spec.label} hit ${target.name}.` : `${attacker.name} launched ${spec.label} at ${target.name}.`);
   return { ok: true, message: `${spec.label} launched at ${target.name} for ${cost} credits.`, cost };
+}
+
+export function tickPending(game) {
+  const due = game.pending.filter((p) => game.tick >= p.at);
+  if (!due.length) return;
+  game.pending = game.pending.filter((p) => game.tick < p.at);
+  for (const p of due) applyAttack(game, game.competitors[p.attacker], game.competitors[p.target], p.kind, p.cost);
+}
+
+// What is about to happen, for the on-screen countdown: random events and attacks within the warning window.
+export function warnings(game, humanId) {
+  const out = [];
+  const limit = WARNING_SECONDS * TPS;
+  for (const ev of game.chaos) {
+    const left = ev.tick - game.tick;
+    if (!ev.done && left > 0 && left <= limit) {
+      out.push({ type: 'event', good: CHAOS_GOOD.includes(ev.kind), name: CHAOS_NAMES[ev.kind], seconds: Math.ceil(left / TPS) });
+    }
+  }
+  for (const p of game.pending) {
+    const left = p.at - game.tick;
+    if (left <= 0 || (p.attacker !== humanId && p.target !== humanId)) continue;
+    const a = game.competitors[p.attacker], d = game.competitors[p.target];
+    out.push({ type: 'attack', mine: p.attacker === humanId, name: ATTACKS[p.kind].label, counter: ATTACKS[p.kind].counter, from: a.name, to: d.name, seconds: Math.ceil(left / TPS) });
+  }
+  return out;
 }
 
 export function tickAttacks(game) {

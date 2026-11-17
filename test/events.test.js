@@ -2,13 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, stepGame } from '../src/sim/game.js';
 import { applyCommand } from '../src/sim/commands.js';
-import { attackCost } from '../src/sim/events.js';
+import { attackCost, warnings } from '../src/sim/events.js';
 import { spawnRate } from '../src/sim/step.js';
 import { PATH_A, PATH_B } from '../src/sim/map.js';
 import { key } from '../src/sim/network.js';
 
 function duel(opts = {}) {
-  const g = createGame({ bots: ['easy'], botsActive: false, chaos: false, credits: 100000, spawnOverride: 3, ...opts });
+  const g = createGame({ bots: ['easy'], botsActive: false, chaos: false, credits: 100000, spawnOverride: 3, attackDelay: 0, ...opts });
   g.map.obstacles.clear();
   return g;
 }
@@ -294,4 +294,61 @@ test('the two new attacks cost 55 and 45 credits and respect the cooldown', () =
   const c1 = g.competitors[0].credits;
   assert.equal(attack(g, 'hijack').ok, true);
   assert.equal(g.competitors[0].credits, c1 - 45);
+});
+
+// ---- Warnings: events and attacks are announced 5 seconds before they land ----
+
+test('a random event is announced for the last 5 seconds before it happens, counting down', () => {
+  const g = duel();
+  g.chaos = [{ tick: 400, kind: 'spike', done: false }];
+  g.tick = 250; assert.deepEqual(warnings(g, 0), []);
+  g.tick = 300; assert.deepEqual(warnings(g, 0).map((w) => [w.name, w.seconds]), [['Traffic spike', 5]]);
+  g.tick = 350; assert.equal(warnings(g, 0)[0].seconds, 3);
+  g.tick = 399; assert.equal(warnings(g, 0)[0].seconds, 1);
+  g.tick = 400; assert.deepEqual(warnings(g, 0), [], 'no warning once it has happened');
+  g.chaos = [{ tick: 400, kind: 'grant', done: false }]; g.tick = 320;
+  assert.equal(warnings(g, 0)[0].good, true, 'a Sponsor grant is flagged as good news');
+});
+
+test('an attack lands 5 seconds after it is launched, and the target is warned', () => {
+  const g = createGame({ bots: ['easy'], botsActive: false, chaos: false, credits: 100000, spawnOverride: 2 });
+  g.map.obstacles.clear();
+  build(g, 1, PATH_A);
+  g.tick = Math.floor(0.3 * g.totalTicks);
+  const board = g.competitors[1].board;
+  assert.equal(g.attackDelay, 100);
+  const r = attack(g, 'latency');
+  assert.equal(r.ok, true);
+  assert.match(r.message, /lands in 5 s/);
+  assert.equal(board.latencyUntil, 0, 'nothing happens yet');
+  const w = warnings(g, 1);
+  assert.deepEqual(w.map((x) => [x.type, x.name, x.seconds]), [['attack', 'Latency spike', 5]]);
+  assert.equal(warnings(g, 0)[0].mine, true, 'the attacker sees it too, marked as their own');
+  run(g, 4); assert.equal(board.latencyUntil, 0);
+  assert.equal(warnings(g, 1)[0].seconds, 1);
+  run(g, 1.2);
+  assert.ok(board.latencyUntil > g.tick, 'it lands after 5 s');
+  assert.deepEqual(warnings(g, 1), []);
+});
+
+test('equipment built during the warning counts: a Router placed in time stops a Latency spike', () => {
+  const g = createGame({ bots: ['easy'], botsActive: false, chaos: false, credits: 100000, spawnOverride: 2 });
+  g.map.obstacles.clear();
+  build(g, 1, PATH_A);
+  g.tick = Math.floor(0.3 * g.totalTicks);
+  attack(g, 'latency');
+  run(g, 2);
+  applyCommand(g, { type: 'demolish', actor: 1, x: 4, y: 2 });
+  build(g, 1, [[4, 2]], 'router');
+  run(g, 4);
+  assert.equal(g.competitors[1].board.latencyUntil, 0, 'the Router arrived in time');
+  run(g, 14);
+  assert.equal(g.competitors[1].attacksBlocked, 1);
+});
+
+test('the cooldown starts when an attack is launched, not when it lands', () => {
+  const g = createGame({ bots: ['easy'], botsActive: false, chaos: false, credits: 100000 });
+  g.tick = Math.floor(0.3 * g.totalTicks);
+  assert.equal(attack(g, 'scan').ok, true);
+  assert.match(attack(g, 'ddos').reason, /cooldown/);
 });

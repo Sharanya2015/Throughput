@@ -41,6 +41,7 @@
 
 ## Phase 7: US5 Keyboard and accessibility (P2)
 
+- [x] T020a [US4] Countdown warnings for random events and attacks, with a 5 s delay before attacks land.
 - [x] T020 [US5] Arrow-key navigation, letter shortcuts, ARIA labels, text overload labels. Document in `docs/PLAYTEST.md`.
 
 ## Phase 8: Polish and evidence

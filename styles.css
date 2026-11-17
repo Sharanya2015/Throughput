@@ -119,3 +119,13 @@ tr.me { background: color-mix(in srgb, var(--accent) 18%, transparent); }
 .lrow.me { box-shadow: inset 0 0 0 2px var(--accent); }
 .lrow.rise { background: color-mix(in srgb, var(--good) 25%, var(--panel2)); } .lrow.fall { background: color-mix(in srgb, var(--bad) 22%, var(--panel2)); }
 @media (prefers-reduced-motion: reduce) { .lrow, .lrow .bar i { transition: none; } }
+
+/* ---- Countdown warnings ---- */
+.warnings { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 4px; min-height: 2.6em; align-content: start; }
+.warnings li { padding: 6px 10px; border-radius: 6px; font-weight: 700; border-left: 6px solid var(--warn); background: color-mix(in srgb, var(--warn) 16%, var(--panel2)); }
+.warnings li.bad { border-left-color: var(--bad); background: color-mix(in srgb, var(--bad) 18%, var(--panel2)); }
+.warnings li.good { border-left-color: var(--good); background: color-mix(in srgb, var(--good) 18%, var(--panel2)); }
+.warnings li.attack { border-left-color: var(--firewall); }
+.warnings li.mine { border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 15%, var(--panel2)); }
+@media (prefers-reduced-motion: no-preference) { .warnings li { animation: blink 1s ease-in-out infinite; } }
+@keyframes blink { 50% { filter: brightness(1.25); } }

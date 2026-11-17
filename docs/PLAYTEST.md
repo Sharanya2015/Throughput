@@ -32,6 +32,15 @@ Run on 2026-11-17 by the build agent in the built-in browser pane (Chromium-base
 | Row sliding animation | Not judged by eye; only the final positions were checked |
 | Reduced-motion setting | Not run |
 
+## Warnings (2026-11-17)
+
+| Check | Result |
+| --- | --- |
+| Random event countdown shows "5", "5 ... 4", down to "5 ... 4 ... 3 ... 2 ... 1" before a Fiber cut | Passed in the browser |
+| A bot's attack on the player is announced with its name, source and counter hint, 5 s before it lands | Passed in the browser (DDoS burst from Ada) |
+| Player's own attack shows "Your attack ... lands in N" | Covered by a unit test only |
+| Screen reader announcement of the countdown | Not run (the panel is a polite live region) |
+
 ## Rough edges seen
 
 - The game opens with focus nowhere; the first Tab goes to the skip link. Click a tile once to focus the board.

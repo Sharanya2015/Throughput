@@ -83,8 +83,8 @@ runtime:
   save_state: "none. Reloading returns to the setup screen."
 
 verification:
-  tests: "node --test (56 unit tests), node scripts/head-to-head.mjs and node scripts/bots-vs-bots.mjs (bot balance), a manual browser playthrough recorded in docs/PLAYTEST.md, and a check that the hosted GitHub Pages site loads and runs a round"
-  tests_passing: "56 of 56 on 2026-11-17"
+  tests: "node --test (60 unit tests), node scripts/head-to-head.mjs and node scripts/bots-vs-bots.mjs (bot balance), a manual browser playthrough recorded in docs/PLAYTEST.md, and a check that the hosted GitHub Pages site loads and runs a round"
+  tests_passing: "60 of 60 on 2026-11-17"
   facts_sourced_from: "The game's own traffic model, defined in specs/001-solo-vs-bots/spec.md. It was not checked against an external networking source or by an independent reviewer."
   known_limits:
     - "Solo vs Bots only. Versus and Co-op are designed in docs/ but not built."

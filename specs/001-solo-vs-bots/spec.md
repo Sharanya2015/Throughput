@@ -131,6 +131,7 @@ A player who cannot use a mouse can place, upgrade, demolish and attack with the
 - **FR-015**: The same seed and command list MUST produce identical results.
 - **FR-016**: All interactions MUST work by keyboard, with visible focus and non-colour cues.
 - **FR-017**: The game MUST run from static files with no network access after load.
+- **FR-018**: Every random event MUST be announced on screen for the 5 seconds before it happens, with a countdown such as "Random event: Traffic spike in 5 ... 4 ... 3 ... 2 ... 1", and flagged as good news when it is positive. Every attack MUST be announced to its target, and shown to its launcher, from launch until it lands 5 seconds later; the attack's cost and cooldown apply at launch, its effect and its counter check apply when it lands, so equipment built during the warning counts.
 
 ### Key Entities
 
@@ -152,6 +153,7 @@ A player who cannot use a mouse can place, upgrade, demolish and attack with the
 - **SC-004**: A full round against 3 bots completes without errors and the replay test reproduces its final scores exactly.
 - **SC-005**: In one-on-one headless duels, Hard outscores Normal and Normal outscores Easy in more than half of rounds. (In three-way rounds the score leader draws everyone's discounted attacks, so the order there can differ; this is reported, not required.)
 - **SC-006**: All core actions are completable with the keyboard alone.
+- **SC-008**: A player warned of an attack can build its counter within the 5-second warning and block it (covered by an automated test).
 - **SC-007**: The leaderboard under the board shows every competitor in rank order (1st, 2nd, 3rd, 4th) and re-orders as scores change. It is hidden during Rush Hour and the results screen reveals the final order.
 
 ## Assumptions

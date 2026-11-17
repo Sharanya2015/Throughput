@@ -41,6 +41,14 @@ export const CHAOS_AT = [0.2, 0.35, 0.5, 0.65, 0.8];
 export const CHAOS_KINDS = ['fiber', 'spike', 'dns', 'surge', 'sale', 'grant', 'glitch'];
 export const CHAOS_SECONDS = { spike: 20, dns: 5, surge: 15, sale: 30, glitch: 15 };
 export const GRANT_CREDITS = 50;
+// Every random event and every attack is announced this many seconds before it lands.
+export const WARNING_SECONDS = 5;
+export const ATTACK_DELAY_SECONDS = 5;
+export const CHAOS_NAMES = {
+  fiber: 'Fiber cut', spike: 'Traffic spike', dns: 'DNS outage', surge: 'Power surge',
+  sale: 'Bandwidth sale', grant: 'Sponsor grant', glitch: 'Routing glitch',
+};
+export const CHAOS_GOOD = ['sale', 'grant'];
 export const GLITCH_KINDS = ['switch', 'router', 'balancer'];
 export const CHAOS_LABELS = {
   fiber: 'Fiber cut: your busiest cable was destroyed',

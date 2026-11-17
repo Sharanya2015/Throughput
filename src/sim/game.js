@@ -1,12 +1,12 @@
 import {
-  ROUND_SECONDS, PHASES, START_CREDITS, TICKS_PER_SECOND as TPS, BOT_THINK_TICKS,
+  ROUND_SECONDS, PHASES, START_CREDITS, TICKS_PER_SECOND as TPS, BOT_THINK_TICKS, ATTACK_DELAY_SECONDS,
 } from './balance.js';
 import { makeRng } from './rng.js';
 import { createMap } from './map.js';
 import { makeBoard } from './network.js';
 import { stepBoard } from './step.js';
 import { applyCommand } from './commands.js';
-import { scheduleChaos, tickChaos, tickAttacks } from './events.js';
+import { scheduleChaos, tickChaos, tickAttacks, tickPending } from './events.js';
 import { bottleneckMessage, finalBottleneck } from './explain.js';
 import { decide } from '../bots/index.js';
 
@@ -17,7 +17,8 @@ const cap1 = (s) => s[0].toUpperCase() + s.slice(1);
 
 export function createGame(opts = {}) {
   const { seed = 1, mode = 'practice', bots = ['easy'], human = true, name = 'You',
-    botsActive = true, credits = START_CREDITS, spawnOverride = null, chaos = true } = opts;
+    botsActive = true, credits = START_CREDITS, spawnOverride = null, chaos = true,
+    attackDelay = ATTACK_DELAY_SECONDS * TPS } = opts;
   const rng = makeRng(seed);
   const map = createMap(rng);
   const totalTicks = ROUND_SECONDS[mode] * TPS;
@@ -35,7 +36,7 @@ export function createGame(opts = {}) {
     seed, mode, rng, map, totalTicks, tick: 0, over: false, botsActive, spawnOverride,
     buildTicks: Math.floor(PHASES.build * totalTicks),
     competitors, chaos: [], effects: { spikeUntil: 0, dnsUntil: 0, saleUntil: 0, glitchUntil: 0 },
-    attacks: [], log: [], commandLog: [], banner: null, hints: [],
+    attacks: [], pending: [], attackDelay, log: [], commandLog: [], banner: null, hints: [],
   };
   if (chaos) scheduleChaos(game);
   return game;
@@ -65,6 +66,7 @@ export function stepGame(game, cmds = []) {
       for (const cmd of decide(game, comp)) issue(game, cmd);
     }
   }
+  tickPending(game);
   tickChaos(game);
   for (const comp of game.competitors) stepBoard(game, comp);
   tickAttacks(game);

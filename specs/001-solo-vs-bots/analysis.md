@@ -28,4 +28,5 @@ Blocking issues remaining: none.
 | B7 | Low | SC-005 as written (three-way rounds) was not stable because the leader draws everyone's discounted attacks. | SC-005 now measures one-on-one duels; three-way results are reported only. |
 | B8 | Low | Spawn-rate steps "every 2 minutes" did not fit a 3-minute Practice round. | Steps happen at each 20% of the round. |
 | B9 | Low | The new leaderboard request said it should "always" show the order, which conflicted with hiding the scoreboard in Rush Hour. | The owner confirmed: keep it hidden in Rush Hour. The leaderboard hides for the last 10% of the round and the results screen shows the final order. |
+| B11 | Medium | The request for warnings before every event and attack meant attacks could no longer land instantly. | Attacks now land 5 seconds after launch; cost and cooldown apply at launch, the effect and the counter check at landing. A test shows a Router built during the warning stops a Latency spike. |
 | B10 | Medium | A swarm's own flood swallowed its malware, so no defense looked the same as a Firewall. | The malware now follows the flood, so each half of the combination counter matters. |

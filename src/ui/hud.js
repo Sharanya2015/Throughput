@@ -1,8 +1,8 @@
 import { h, clear, mmss } from './dom.js';
-import { DEVICE_KINDS, ATTACKS, GRID, TICKS_PER_SECOND as TPS } from '../sim/balance.js';
+import { DEVICE_KINDS, ATTACKS, GRID, TICKS_PER_SECOND as TPS, WARNING_SECONDS } from '../sim/balance.js';
 import { key, specOf, capacityOf, queueMax, utilization, winSum } from '../sim/network.js';
 import { phaseOf } from '../sim/game.js';
-import { attackCost, attacksUnlocked, cooldownLeft } from '../sim/events.js';
+import { attackCost, attacksUnlocked, cooldownLeft, warnings } from '../sim/events.js';
 import { bottleneckMessage } from '../sim/explain.js';
 
 const PHASE_TEXT = {
@@ -18,6 +18,10 @@ export function createHud(root, game, human, ctl) {
   const time = stat('Time left'), credits = stat('Credits'), score = stat('Score'), delivered = stat('Delivered'), dropped = stat('Dropped');
   const phase = h('p', { class: 'phase', 'aria-live': 'polite' });
   const banner = h('p', { class: 'banner', role: 'status' });
+  const warn = h('ul', { class: 'warnings', role: 'status', 'aria-live': 'polite' });
+  let warnSig = '';
+  // "5 ... 4 ... 3": the numbers already counted down, ending at the current one.
+  const countdown = (n) => Array.from({ length: WARNING_SECONDS - n + 1 }, (_, i) => WARNING_SECONDS - i).join(' ... ');
   const pause = h('button', { type: 'button', onclick: ctl.togglePause }, 'Pause (P)');
   const speed = h('select', { 'aria-label': 'Game speed', onchange: (e) => ctl.setSpeed(Number(e.target.value)) },
     ...[1, 2, 4].map((n) => h('option', { value: n }, `${n}x speed`)));
@@ -54,7 +58,7 @@ export function createHud(root, game, human, ctl) {
 
   root.append(
     h('div', { class: 'stats' }, time.el, credits.el, score.el, delivered.el, dropped.el),
-    phase, banner,
+    phase, banner, warn,
     h('div', { class: 'controls' }, pause, h('label', {}, 'Speed ', speed)));
   const side = h('div', { class: 'side' },
     h('section', { class: 'card' }, h('h3', {}, 'Devices'), palette,
@@ -89,6 +93,20 @@ export function createHud(root, game, human, ctl) {
     const ph = phaseOf(game);
     phase.textContent = state.paused ? 'Paused.' : PHASE_TEXT[ph];
     banner.textContent = game.banner && game.banner.until > t ? game.banner.text : '';
+    const items = warnings(game, human.id).map((w) => {
+      const count = countdown(w.seconds);
+      if (w.type === 'event') {
+        return { cls: w.good ? 'good' : 'bad', text: `${w.good ? 'Good news' : 'Warning'}. Random event: ${w.name} in ${count}` };
+      }
+      if (w.mine) return { cls: 'mine', text: `Your attack: ${w.name} on ${w.to} lands in ${count}` };
+      return { cls: 'attack', text: `Incoming attack: ${w.name} from ${w.from} in ${count}. Counter: ${w.counter}` };
+    });
+    const wsig = items.map((i) => i.text).join('|');
+    if (wsig !== warnSig) {
+      warnSig = wsig;
+      clear(warn);
+      for (const i of items) warn.append(h('li', { class: i.cls }, i.text));
+    }
     pause.textContent = state.paused ? 'Resume (P)' : 'Pause (P)';
     for (const [kind, b] of toolButtons) b.setAttribute('aria-pressed', String(state.tool === kind));
 
