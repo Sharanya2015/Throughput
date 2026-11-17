@@ -59,13 +59,13 @@ build:
     - "https://automateyournetwork.com/arcade/ (submission page and ARCADE.md template)"
   skills_and_plugins:
     - "Spec Kit skill files in .claude/skills (read and followed by hand, not invoked as commands)"
-  other_tools: [uv, specify-cli, node 22 (node --test), python3 (http.server), git, gh]
+  other_tools: [uv, specify-cli, node 22 (node --test), python3 (http.server), git, gh (GitHub CLI), GitHub Pages]
   human_prompts: unknown
   usage:
     input_tokens: unknown
     output_tokens: unknown
     cost_note: unknown
-  ai_generated_assets: "All code, tests, documentation, spec artifacts and interface text were written by the AI agent. No images or audio were generated."
+  ai_generated_assets: "All code, tests, documentation, spec artifacts and interface text were written by the AI agent. No images or audio were generated. The card image (assets/card.jpg) and README screenshot (assets/screenshot.jpg) are screenshots of the running game, and the card adds a title and tagline overlay made in the browser."
 
 runtime:
   kind: static-web
@@ -83,13 +83,14 @@ runtime:
   save_state: "none. Reloading returns to the setup screen."
 
 verification:
-  tests: "node --test (50 unit tests), node scripts/head-to-head.mjs and node scripts/bots-vs-bots.mjs (bot balance), and a manual browser playthrough recorded in docs/PLAYTEST.md"
+  tests: "node --test (50 unit tests), node scripts/head-to-head.mjs and node scripts/bots-vs-bots.mjs (bot balance), a manual browser playthrough recorded in docs/PLAYTEST.md, and a check that the hosted GitHub Pages site loads and runs a round"
   tests_passing: "50 of 50 on 2026-11-17"
   facts_sourced_from: "The game's own traffic model, defined in specs/001-solo-vs-bots/spec.md. It was not checked against an external networking source or by an independent reviewer."
   known_limits:
     - "Solo vs Bots only. Versus and Co-op are designed in docs/ but not built."
     - "No second person has playtested without coaching."
     - "Offline play was not tested, though the code makes no network calls."
+    - "The hosted Pages site was checked once, in one browser, by loading it and running a round with scripted commands. It was not clicked through by hand."
     - "Desktop only. Phone layout and screen readers were not tested."
     - "In three-way bot rounds the Normal bot often beats Hard because the leader draws everyone's attacks. One-on-one duels order the bots as expected."
     - "No licence file yet."
@@ -101,7 +102,7 @@ Throughput puts you in charge of a tiny network. You place cables, switches, rou
 
 ## How it was built
 
-The game followed the seven workshop steps with GitHub Spec Kit: constitution, specification, clarification, plan, tasks, analysis and implementation. The Spec Kit slash commands were not available as commands during the session, so the agent followed each command's instruction file by hand and wrote the same artifacts. The simulation was written first as plain JavaScript with no browser code, and three hand-worked cases were turned into tests before the interface existed: a correct case, a wrong upgrade and parallel paths. Building the game exposed design faults that the written spec had missed. A Source and Destination on the same row allowed only one shortest path, which made load balancing impossible, so both were moved. A flood attack did nothing until the order of queue updates was changed. Bots rebuilt cables where they had just removed one to fit a firewall. Each fix was recorded in the analysis file. The interface was played through in the built-in browser using the keyboard only. The online modes in the original design were left out to keep the first version small and static.
+The game followed the seven workshop steps with GitHub Spec Kit: constitution, specification, clarification, plan, tasks, analysis and implementation. The Spec Kit slash commands were not available as commands during the session, so the agent followed each command's instruction file by hand and wrote the same artifacts. The simulation was written first as plain JavaScript with no browser code, and three hand-worked cases were turned into tests before the interface existed: a correct case, a wrong upgrade and parallel paths. Building the game exposed design faults that the written spec had missed. A Source and Destination on the same row allowed only one shortest path, which made load balancing impossible, so both were moved. A flood attack did nothing until the order of queue updates was changed. Bots rebuilt cables where they had just removed one to fit a firewall. The interface was played through in the built-in browser using the keyboard only. A colour pass followed, and the static site was published on GitHub Pages and checked there. The online modes in the original design were left out to keep the first version small and static.
 
 ## What we'd tell the next builder
 
