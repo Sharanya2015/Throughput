@@ -1,0 +1,12 @@
+{
+  "name": "throughput",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Throughput: a browser game that teaches bandwidth bottlenecks and load balancing.",
+  "scripts": {
+    "test": "node --test",
+    "serve": "python3 -m http.server 8000 --bind 127.0.0.1",
+    "bots": "node scripts/bots-vs-bots.mjs 200"
+  }
+}
