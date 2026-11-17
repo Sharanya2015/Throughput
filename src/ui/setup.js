@@ -41,11 +41,41 @@ export function renderSetup(root, onStart) {
       form,
       h('section', { class: 'card how' },
         h('h2', {}, 'How to play'),
+        h('p', {}, h('strong', {}, 'Goal: '), 'deliver more packets to the Destination (DST) than the bots before the timer ends. Each delivered packet is 1 point and 1 credit.'),
+
+        h('h3', {}, 'Your first minute'),
         h('ol', {},
-          h('li', {}, 'Pick a device (or press its letter) and click empty tiles to build a chain of touching devices from SRC to DST.'),
-          h('li', {}, 'Each delivered packet is 1 point and 1 credit. Spend credits on devices and upgrades.'),
-          h('li', {}, 'A path is only as fast as its slowest device. Watch the queue (q) and percent figures to find the bottleneck.'),
-          h('li', {}, 'Upgrading a device that is not the bottleneck changes nothing. Add a second path to share the load.'),
-          h('li', {}, 'From the Live phase you can attack bots, and they will attack you.')),
-        h('p', { class: 'hint' }, 'Keyboard: arrows move, C S R F L place, U upgrade, X remove, P pause.'))));
+          h('li', {}, 'Click Cable (or click a tile and press C), then click tiles to build a chain from SRC to DST. Devices must touch edge to edge.'),
+          h('li', {}, 'A path that works: tiles (1,2) to (7,2) along the third row, then (7,3) and (7,4). That is 9 cables and 90 of your 150 credits.'),
+          h('li', {}, 'Watch the numbers on each device: q is the queue (5 waiting packets at most) and % is how much of its speed is used.')),
+
+        h('h3', {}, 'The idea to learn'),
+        h('ul', {},
+          h('li', {}, 'A path is only as fast as its slowest device. That device is the bottleneck. The game names it when packets are dropped.'),
+          h('li', {}, 'Upgrading a device that is not the bottleneck changes nothing.'),
+          h('li', {}, 'Two paths that do not touch share the load. Cables that touch merge their traffic, so keep parallel paths apart.')),
+
+        h('h3', {}, 'Devices'),
+        h('table', {},
+          h('thead', {}, h('tr', {}, ...['Device', 'Key', 'Cost', 'Speed', 'What it does'].map((x) => h('th', { scope: 'col' }, x)))),
+          h('tbody', {},
+            ...[
+              ['Cable', 'C', '10', '4 pkt/s', 'Carries packets. Upgrade to 8, then 12 pkt/s (25 and 50 credits).'],
+              ['Switch', 'S', '30', '10 pkt/s', 'Splits packets across up to 3 ways.'],
+              ['Router', 'R', '50', '12 pkt/s', 'Sends packets to the shortest queue.'],
+              ['Firewall', 'F', '40', '6 pkt/s', 'Removes malware. Slow, so do not use it on a busy single path.'],
+              ['Load Balancer', 'L', '60', '12 pkt/s', 'Splits across up to 4 ways and holds 25 packets.'],
+            ].map((r) => h('tr', {}, h('th', { scope: 'row' }, r[0]), ...r.slice(1).map((c) => h('td', {}, c)))))),
+        h('p', { class: 'hint' }, 'Removing a device refunds half its cost. You can have 20 devices. Dark tiles marked BLOCK cannot be built on.'),
+
+        h('h3', {}, 'How a round runs'),
+        h('ul', {},
+          h('li', {}, h('strong', {}, 'Build'), ' (first 5%): no packets yet. Lay your first path.'),
+          h('li', {}, h('strong', {}, 'Grace'), ' (to 20%): packets flow, attacks are locked.'),
+          h('li', {}, h('strong', {}, 'Live'), ' (to 90%): chaos events hit everyone, and you can attack bots while they attack you.'),
+          h('li', {}, h('strong', {}, 'Rush Hour'), ' (last 10%): packets double and the scoreboard is hidden.')),
+        h('p', {}, 'Chaos events: a cable is cut, traffic spikes, the Destination goes quiet, a device loses power, or upgrades go on sale. Attacks: DDoS burst (counter with a Load Balancer or two paths), Malware (Firewall), Latency spike (a Router), Port scan (Firewall next to the Source).'),
+
+        h('h3', {}, 'Controls'),
+        h('p', { class: 'hint' }, 'Click a tile once to focus the board. Arrow keys move. C S R F L place a device. U upgrades a cable. X removes a device. P pauses. Esc clears the chosen device. Everything also works with the mouse.'))));
 }
