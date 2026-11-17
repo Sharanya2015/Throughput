@@ -1,5 +1,9 @@
 # Throughput
 
+**Play it now: https://sharanya2015.github.io/Throughput/**
+
+![Throughput gameplay: a coloured 8 by 8 board of cables, a switch, a router, a firewall and a load balancer](assets/screenshot.jpg)
+
 A small browser game that teaches **how to find a bandwidth bottleneck and balance load across parallel paths**.
 
 You build a chain of network devices on an 8 x 8 grid to carry packets from a Source to a Destination, and compete against up to three bots for 3 minutes (Practice) or 10 minutes (Full). Every device shows how full its queue is and how much of its capacity is used, and the game tells you in plain language which device is the bottleneck and whether an upgrade helped.
@@ -67,7 +71,8 @@ node scripts/bots-vs-bots.mjs 100               # three-way bot rounds
 | Browser playthrough by the build agent (keyboard build, wrong upgrade message, results screen) | **Passed**, see `docs/PLAYTEST.md` |
 | A second person playing without coaching | **Not done** |
 | Playing with the network disconnected | **Not run** (no network calls found in the code) |
-| Screen reader, phone layout, GitHub Pages | **Not run** |
+| GitHub Pages: loaded https://sharanya2015.github.io/Throughput/ and ran a round on it (2026-11-17) | **Passed** |
+| Screen reader and phone layout | **Not run** |
 
 ## How it was built (Spec Kit)
 

@@ -72,7 +72,7 @@ runtime:
   stack: "HTML, CSS and JavaScript ES modules. No build step. Node is only used for tests."
   start: "python3 -m http.server 8000 --bind 127.0.0.1"
   url_after_start: "http://localhost:8000"
-  hosted_url: unknown
+  hosted_url: "https://sharanya2015.github.io/Throughput/"
   static_root: .
   requires_install: false
   requires_network: false
