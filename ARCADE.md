@@ -11,8 +11,8 @@ game:
   skill_level: beginner
   play_minutes: 3
   levels: 2
-  card_image: unknown
-  card_image_alt: unknown
+  card_image: assets/card.jpg
+  card_image_alt: "Throughput title card with the tagline 'Find the bottleneck. Share the load. Outscore the bots.' beside a colourful 8 by 8 network board of cables, a switch, a router, a firewall and a load balancer."
   repo: https://github.com/Sharanya2015/Throughput
   repo_path: .
   license: unknown

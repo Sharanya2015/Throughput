@@ -51,7 +51,7 @@ export function createBoard(container, game, human, handlers) {
     const tag = dev.kind === 'cable' ? `C${'+'.repeat(dev.level)}` : DEVICE_KINDS[dev.kind].letter;
     const q = `q${dev.queue.length}/${queueMax(dev)}`;
     return {
-      cls: `device k-${dev.kind} ${state ? 'warn' : ''} ${util >= 90 ? 'hot' : ''}`,
+      cls: `device k-${dev.kind} ${state ? 'warn' : ''} ${util >= 90 ? 'hot' : ''} u-${util >= 90 ? 'high' : util >= 50 ? 'mid' : 'low'} ${off ? 'off' : ''}`,
       body: [tag, q, `${util}%`, state],
       util,
       label: `${pos}: ${SHAPES[dev.kind]}, ${capacityOf(dev)} packets per second, queue ${dev.queue.length} of ${queueMax(dev)}, ${util} percent used${state ? ', ' + state : ''}`,

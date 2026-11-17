@@ -55,3 +55,49 @@ tr.me { background: var(--panel2); } pre { background: var(--panel2); padding: 8
 .how h3 { margin: 14px 0 4px; color: var(--accent); }
 .how ul, .how ol { padding-left: 20px; margin: 4px 0; display: grid; gap: 4px; }
 .how table { font-size: .82rem; margin-top: 4px; }
+
+/* ---- Colour pass ---- */
+:root {
+  --cable: #2ec4b6; --switch: #a78bfa; --router: #ff9f43; --firewall: #ff5d73; --balancer: #4ade80;
+  --src: #4ade80; --dst: #fbbf24;
+}
+body { background: radial-gradient(1200px 600px at 10% -10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+  radial-gradient(900px 500px at 100% 0%, color-mix(in srgb, var(--switch) 18%, transparent), transparent 60%), var(--bg); background-attachment: fixed; }
+h1 { background: linear-gradient(90deg, var(--cable), var(--accent), var(--switch)); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: .5px; }
+.card, .stat { box-shadow: 0 6px 18px rgba(0, 0, 0, .25); }
+.card { border-top: 3px solid var(--accent); }
+.stat:nth-child(1) { border-top: 3px solid var(--accent); } .stat:nth-child(2) { border-top: 3px solid var(--dst); }
+.stat:nth-child(3) { border-top: 3px solid var(--good); } .stat:nth-child(4) { border-top: 3px solid var(--cable); } .stat:nth-child(5) { border-top: 3px solid var(--bad); }
+.how h3 { color: var(--dst); }
+button:not(:disabled):hover { filter: brightness(1.15); transform: translateY(-1px); }
+button { transition: filter .12s, transform .12s; }
+button.primary { background: linear-gradient(90deg, var(--cable), var(--accent)); border: 0; }
+
+.grid { padding: 8px; background: color-mix(in srgb, var(--panel) 70%, transparent); border: 1px solid var(--line); border-radius: 12px;
+  background-image: linear-gradient(color-mix(in srgb, var(--line) 25%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--line) 25%, transparent) 1px, transparent 1px);
+  background-size: 12.5% 12.5%; }
+.tile.empty:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: var(--accent); }
+.tile.endpoint.source { --c: var(--src); background: radial-gradient(circle, color-mix(in srgb, var(--src) 40%, var(--panel)), var(--panel2)); border-color: var(--src); }
+.tile.endpoint.dest { --c: var(--dst); background: radial-gradient(circle, color-mix(in srgb, var(--dst) 40%, var(--panel)), var(--panel2)); border-color: var(--dst); }
+.tile.endpoint.source .l0 { color: var(--src); } .tile.endpoint.dest .l0 { color: var(--dst); }
+.tile.obstacle { background: repeating-linear-gradient(45deg, #3a2f4f, #3a2f4f 6px, #2a2238 6px, #2a2238 12px); border-color: #5a4a78; }
+
+.tile.device { --c: var(--cable); border-color: var(--c); color: var(--text);
+  background: linear-gradient(to top, color-mix(in srgb, var(--c) 60%, var(--panel)) var(--u, 0%), color-mix(in srgb, var(--c) 10%, var(--panel)) var(--u, 0%)); }
+.tile.k-cable { --c: var(--cable); } .tile.k-switch { --c: var(--switch); } .tile.k-router { --c: var(--router); }
+.tile.k-firewall { --c: var(--firewall); } .tile.k-balancer { --c: var(--balancer); }
+.tile.device .l0 { color: var(--c); filter: brightness(1.25); text-shadow: 0 1px 0 rgba(0, 0, 0, .35); }
+.tile.u-mid { box-shadow: 0 0 8px color-mix(in srgb, var(--warn) 45%, transparent); }
+.tile.u-high, .tile.hot { border-color: var(--warn); box-shadow: 0 0 12px var(--warn); animation: pulse 1s ease-in-out infinite; }
+.tile.warn { border-color: var(--bad); box-shadow: 0 0 14px var(--bad); animation: pulse .6s ease-in-out infinite; }
+.tile.off { filter: grayscale(1) brightness(.7); animation: none; }
+@keyframes pulse { 50% { box-shadow: 0 0 2px transparent; } }
+@media (prefers-reduced-motion: reduce) { .tile, .tile.u-high, .tile.hot, .tile.warn { animation: none !important; } button { transition: none; } }
+.tile.selected { outline: 3px solid #fff; outline-offset: 1px; }
+
+.tool { border-left: 6px solid var(--line); } .shape-cable { border-left-color: var(--cable); } .shape-switch { border-left-color: var(--switch); }
+.shape-router { border-left-color: var(--router); } .shape-firewall { border-left-color: var(--firewall); } .shape-balancer { border-left-color: var(--balancer); }
+.tool[aria-pressed="true"] { background: var(--panel2); box-shadow: inset 0 0 0 2px var(--accent); color: var(--text); } .tool[aria-pressed="true"] span { color: var(--muted); }
+.banner { background: color-mix(in srgb, var(--warn) 18%, transparent); border-radius: 6px; padding: 0 8px; }
+.banner:empty { background: none; padding: 0; }
+tr.me { background: color-mix(in srgb, var(--accent) 18%, transparent); }
