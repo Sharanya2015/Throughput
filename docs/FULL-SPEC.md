@@ -1,6 +1,6 @@
 # Throughput Specification
 
-Source of truth for gameplay: the "Throughput: Rules" document (https://claude.ai/artifact/7WkEyVq5Zj8KqhRUesQrPx). This spec turns those rules into testable requirements. All numbers below are defaults stored in `balance.ts`.
+Source of truth for gameplay: the "Throughput: Rules" document. This spec turns those rules into testable requirements. All numbers below are defaults stored in `balance.ts`.
 
 ## Summary
 
