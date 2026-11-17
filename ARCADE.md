@@ -5,8 +5,8 @@ game:
   title: Throughput
   slug: throughput
   tagline: "Find the bottleneck, share the load, and outscore three bots."
-  summary: "Throughput is a short browser game where you build a chain of network devices that carries packets from a Source to a Destination while bots compete and attack. Seven random events, six attacks (two need a combination of equipment to stop) and a live leaderboard keep each round moving. After each decision it shows queue fill, utilization and drops, and it names the bottleneck. It teaches that a path is only as fast as its slowest device and that parallel paths share load."
-  topics: [bandwidth, bottleneck, load-balancing, queues, firewalls]
+  summary: "Throughput is a short browser game where you build a chain of network devices that carries packets from a Source to a Destination while three bots compete and attack. Seven random events and six attacks are announced with a five-second countdown, two of the attacks need a combination of equipment to stop, and a live leaderboard tracks the race. After each decision it names the bottleneck, teaching that a path is only as fast as its slowest device and that parallel paths share load."
+  topics: [bandwidth, bottleneck, load-balancing, queues, firewalls, ddos]
   category: network-fundamentals
   skill_level: beginner
   play_minutes: 3
@@ -43,7 +43,7 @@ build:
       - StarterKit/CONSTITUTION.md
       - StarterKit/SPEC.md
       - StarterKit/PLAN.md
-    task_count: 24
+    task_count: 25
     loops_or_phases: "Seven workshop steps run by hand, one at a time. No Ralph loop."
   model: claude-sonnet-5-5
   helper_models: "unknown (one fetch subagent read the Arcade page; its model was not recorded)"
@@ -51,8 +51,8 @@ build:
   harness_version: unknown
   mcp_servers:
     - "Claude Docs connector (wrote the rules document)"
-    - "Claude built-in browser (playtesting)"
-    - "Terminal panel (git push)"
+    - "Claude built-in browser (playtesting and the card image)"
+    - "Terminal panel (git push, run by the human)"
   rag_and_sources:
     - "GitHub Spec Kit bundled templates and skill files, version 1.4.2.dev0"
     - "The workshop lab guide, pasted by the human"
@@ -79,7 +79,7 @@ runtime:
   requires_api_key: false
   uses_ai_at_runtime: false
   browsers: "Played in the Claude built-in browser pane (Chromium based) only. Other browsers were not tried."
-  accessibility: "Board tiles are buttons with descriptive labels, arrow-key movement, letter shortcuts, visible focus, and text labels in addition to colour. A screen reader was not tested."
+  accessibility: "Board tiles are buttons with descriptive labels, arrow-key movement, letter shortcuts, visible focus, and text labels in addition to colour. Countdown warnings sit in a polite live region. A screen reader was not tested."
   save_state: "none. Reloading returns to the setup screen."
 
 verification:
@@ -92,17 +92,19 @@ verification:
     - "Offline play was not tested, though the code makes no network calls."
     - "The hosted Pages site was checked once, in one browser, by loading it and running a round with scripted commands. It was not clicked through by hand."
     - "Desktop only. Phone layout and screen readers were not tested."
+    - "Sponsor grant and Routing glitch were covered by unit tests but not seen firing in the browser."
+    - "Bots do not react to the five-second attack warnings; only the human player can use them."
     - "In three-way bot rounds the Normal bot often beats Hard because the leader draws everyone's attacks. One-on-one duels order the bots as expected."
     - "No licence file yet."
 ---
 
 ## In one paragraph
 
-Throughput puts you in charge of a tiny network. You place cables, switches, routers, firewalls and load balancers on an 8 by 8 grid so packets can flow from a Source to a Destination, and every delivered packet scores a point. Three bots play the same map and attack you as the round goes on. The game shows how full each queue is and how much of each device's speed is used, and when packets are dropped it names the bottleneck. If you upgrade a link that is not the bottleneck, it tells you so. A round takes 3 minutes in Practice or 10 minutes in the full version.
+Throughput puts you in charge of a tiny network. You place cables, switches, routers, firewalls and load balancers on an 8 by 8 grid so packets can flow from a Source to a Destination, and every delivered packet scores a point. Three bots play the same map and attack you, random events and attacks are announced with a five-second countdown so you can react, and a leaderboard under your board ranks everyone until the last 10 percent of the round hides it. The game shows how full each queue is, names the bottleneck when packets drop, and tells you if you upgraded the wrong link. A round takes 3 minutes in Practice or 10 minutes in the full version.
 
 ## How it was built
 
-The game followed the seven workshop steps with GitHub Spec Kit: constitution, specification, clarification, plan, tasks, analysis and implementation. The Spec Kit slash commands were not available as commands during the session, so the agent followed each command's instruction file by hand and wrote the same artifacts. The simulation was written first as plain JavaScript with no browser code, and three hand-worked cases were turned into tests before the interface existed: a correct case, a wrong upgrade and parallel paths. Building the game exposed design faults that the written spec had missed. A Source and Destination on the same row allowed only one shortest path, which made load balancing impossible, so both were moved. A flood attack did nothing until the order of queue updates was changed. Bots rebuilt cables where they had just removed one to fit a firewall. The interface was played through in the built-in browser using the keyboard only. A colour pass followed, and the static site was published on GitHub Pages and checked there. The online modes in the original design were left out to keep the first version small and static.
+The game followed the seven workshop steps with GitHub Spec Kit: constitution, specification, clarification, plan, tasks, analysis and implementation. The Spec Kit slash commands were not available as commands during the session, so the agent followed each command's instruction file by hand and wrote the same artifacts. The simulation was written first as plain JavaScript with no browser code, and three hand-worked cases were turned into tests before the interface existed: a correct case, a wrong upgrade and parallel paths. Building the game exposed design faults that the written spec had missed. A Source and Destination on the same row allowed only one shortest path, which made load balancing impossible, so both were moved. A flood attack did nothing until the order of queue updates was changed. Bots rebuilt cables where they had just removed one to fit a firewall. The interface was played through in the built-in browser using the keyboard only. Later requests added a colour pass, two more random events, two attacks that need two kinds of equipment to stop, a live leaderboard and a five-second warning before every event and attack, each with new tests. The warning meant attacks no longer land instantly. The static site was published on GitHub Pages and checked there. The online modes in the original design were left out to keep the first version small and static.
 
 ## What we'd tell the next builder
 
